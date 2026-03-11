@@ -5,8 +5,8 @@ use axum::{extract::State, response::IntoResponse, routing::get, Router};
 use prometheus::{Encoder, GaugeVec, Gauge, Opts, Registry, TextEncoder};
 use std::sync::Arc;
 
-/// All Prometheus metrics for zcash-watchman.
-pub struct WatchmanMetrics {
+/// All Prometheus metrics for zcash-sentinel.
+pub struct SentinelMetrics {
     pub registry: Registry,
     /// Balance per account per pool in zatoshis.
     pub balance_zatoshis: GaugeVec,
@@ -24,7 +24,7 @@ pub struct WatchmanMetrics {
     pub watched_accounts_total: Gauge,
 }
 
-impl WatchmanMetrics {
+impl SentinelMetrics {
     pub fn new() -> Result<Self> {
         let registry = Registry::new();
 
@@ -82,7 +82,7 @@ impl WatchmanMetrics {
         )?;
         registry.register(Box::new(watched_accounts_total.clone()))?;
 
-        Ok(WatchmanMetrics {
+        Ok(SentinelMetrics {
             registry,
             balance_zatoshis,
             total_balance_zec,

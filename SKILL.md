@@ -1,12 +1,12 @@
 ---
-name: zcash-watchman
-description: Monitor Zcash balances, view transactions and memos, add/remove shielded accounts and transparent addresses, check sync status and Prometheus metrics via the zcash-watchman API.
+name: zcash-sentinel
+description: Monitor Zcash balances, view transactions and memos, add/remove shielded accounts and transparent addresses, check sync status and Prometheus metrics via the zcash-sentinel API.
 allowed-tools: Bash(curl:*), Bash(docker:*)
 ---
 
-# Zcash Watchman — Balance Monitoring API
+# Zcash Sentinel — Balance Monitoring API
 
-The zcash-watchman service (Sigil Watchmen) monitors Zcash balances by syncing with a lightwalletd backend using zingolib. It supports shielded accounts (via Unified Full Viewing Keys), transparent addresses, transaction history with decrypted memos, and Prometheus metrics.
+The zcash-sentinel service (Sigil Sentinel) monitors Zcash balances by syncing with a lightwalletd backend using zingolib. It supports shielded accounts (via Unified Full Viewing Keys), transparent addresses, transaction history with decrypted memos, and Prometheus metrics.
 
 **Base URL:** `http://172.17.0.1:9101`
 **Metrics URL:** `http://172.17.0.1:9100/metrics`
@@ -45,7 +45,7 @@ curl -s -X DELETE http://172.17.0.1:9101/api/accounts/my-wallet | jq .
 curl -s http://172.17.0.1:9100/metrics | grep zcash_
 
 # Check container status and recent logs
-docker logs --tail 20 zcash-watchman
+docker logs --tail 20 zcash-sentinel
 ```
 
 ## API Endpoints
@@ -186,16 +186,16 @@ curl -s http://172.17.0.1:9100/metrics | grep 'zcash_sync_lag_blocks\|zcash_chai
 
 ```bash
 # View recent logs
-docker logs --tail 50 zcash-watchman
+docker logs --tail 50 zcash-sentinel
 
 # Follow logs live
-docker logs -f zcash-watchman
+docker logs -f zcash-sentinel
 
 # Restart the service
-docker restart zcash-watchman
+docker restart zcash-sentinel
 
 # Check container health
-docker inspect --format='{{.State.Health.Status}}' zcash-watchman
+docker inspect --format='{{.State.Health.Status}}' zcash-sentinel
 ```
 
 ## Notes
@@ -205,5 +205,5 @@ docker inspect --format='{{.State.Health.Status}}' zcash-watchman
 - 1 ZEC = 100,000,000 zatoshis
 - Transactions are returned newest-first
 - Memos are only available for shielded transactions where the viewing key can decrypt them
-- The service persists accounts to `/var/lib/zcash-watchman/accounts.json` — they survive restarts
+- The service persists accounts to `/var/lib/zcash-sentinel/accounts.json` — they survive restarts
 - Prometheus metrics are scraped by the barad-dur monitoring stack on the `barad-dur_fukuii-network`

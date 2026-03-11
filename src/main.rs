@@ -11,10 +11,10 @@ use tokio::sync::RwLock;
 use tracing::{error, info};
 
 #[derive(Parser)]
-#[command(name = "zcash-watchman", about = "Zcash balance monitoring service")]
+#[command(name = "zcash-sentinel", about = "Zcash balance monitoring service")]
 struct Cli {
     /// Path to configuration file
-    #[arg(long, short, default_value = "/etc/zcash-watchman/config.toml")]
+    #[arg(long, short, default_value = "/etc/zcash-sentinel/config.toml")]
     config: PathBuf,
 }
 
@@ -53,7 +53,7 @@ pub struct AppState {
     pub config: Config,
     pub store: RwLock<store::AccountStore>,
     pub scanner: RwLock<scanner::Scanner>,
-    pub metrics: metrics::WatchmanMetrics,
+    pub metrics: metrics::SentinelMetrics,
 }
 
 #[tokio::main]
@@ -77,7 +77,7 @@ async fn main() -> Result<()> {
     info!(
         endpoint = %config.lightwalletd.endpoint,
         poll_interval = config.scanner.poll_interval_secs,
-        "Starting zcash-watchman"
+        "Starting zcash-sentinel"
     );
 
     // Load persisted accounts
@@ -86,8 +86,8 @@ async fn main() -> Result<()> {
     info!(accounts = account_count, "Loaded persisted accounts");
 
     // Initialize metrics
-    let watchman_metrics = metrics::WatchmanMetrics::new()?;
-    watchman_metrics.watched_accounts_total.set(account_count as f64);
+    let sentinel_metrics = metrics::SentinelMetrics::new()?;
+    sentinel_metrics.watched_accounts_total.set(account_count as f64);
 
     // Initialize scanner
     let scanner = scanner::Scanner::new(config.clone());
@@ -97,7 +97,7 @@ async fn main() -> Result<()> {
         config: config.clone(),
         store: RwLock::new(store),
         scanner: RwLock::new(scanner),
-        metrics: watchman_metrics,
+        metrics: sentinel_metrics,
     });
 
     // Spawn the metrics HTTP server
@@ -127,7 +127,7 @@ async fn main() -> Result<()> {
     info!(
         metrics = %config.server.metrics_bind,
         api = %config.server.api_bind,
-        "zcash-watchman is running"
+        "zcash-sentinel is running"
     );
 
     // Wait for any task to finish (they should all run indefinitely)

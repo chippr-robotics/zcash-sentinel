@@ -166,7 +166,7 @@
     </g>
   </g>
 
-  <!-- === TITLE TEXT: SIGIL WATCHMEN === -->
+  <!-- === TITLE TEXT: SIGIL SENTINEL === -->
   <!-- Heavy metal style blackletter-inspired angular text -->
   <g filter="url(#text-shadow)">
     <text
@@ -190,7 +190,7 @@
       fill="url(#text-metal)"
       text-anchor="middle"
       filter="url(#noise)"
-    >WATCHMEN</text>
+    >SENTINEL</text>
   </g>
 
   <!-- Horizontal rule slashes flanking the subtitle -->

@@ -1,4 +1,4 @@
-# Multi-stage build for zcash-watchman
+# Multi-stage build for zcash-sentinel
 # zingolib v3.0.0 requires Rust edition 2024 (channel 1.90+)
 FROM rust:1.90-bookworm AS builder
 
@@ -25,12 +25,12 @@ RUN apt-get update && \
     apt-get install -y ca-certificates curl && \
     rm -rf /var/lib/apt/lists/*
 
-COPY --from=builder /build/target/release/zcash-watchman /usr/local/bin/
+COPY --from=builder /build/target/release/zcash-sentinel /usr/local/bin/
 
 # Create data directory
-RUN mkdir -p /var/lib/zcash-watchman
+RUN mkdir -p /var/lib/zcash-sentinel
 
 EXPOSE 9100 9101
 
-ENTRYPOINT ["zcash-watchman"]
-CMD ["--config", "/etc/zcash-watchman/config.toml"]
+ENTRYPOINT ["zcash-sentinel"]
+CMD ["--config", "/etc/zcash-sentinel/config.toml"]

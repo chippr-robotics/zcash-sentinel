@@ -40,7 +40,7 @@ impl Scanner {
     pub fn new(config: Config) -> Self {
         let data_dir = PathBuf::from(&config.storage.accounts_file)
             .parent()
-            .unwrap_or(std::path::Path::new("/var/lib/zcash-watchman"))
+            .unwrap_or(std::path::Path::new("/var/lib/zcash-sentinel"))
             .join("wallets");
         Scanner {
             config,

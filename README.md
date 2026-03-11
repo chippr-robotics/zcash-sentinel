@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/logo.svg" alt="Sigil Watchmen" width="480" />
+  <img src="docs/logo.svg" alt="Sigil Sentinel" width="480" />
 </p>
 
 <p align="center">
@@ -8,13 +8,13 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/chippr-robotics/sigil-watchmen">
+  <a href="https://github.com/chippr-robotics/sigil-sentinel">
     <img src="https://img.shields.io/badge/zcash-mainnet-f4b728?style=flat-square" alt="Zcash Mainnet"/>
   </a>
-  <a href="https://github.com/chippr-robotics/sigil-watchmen">
+  <a href="https://github.com/chippr-robotics/sigil-sentinel">
     <img src="https://img.shields.io/badge/rust-1.90+-b7410e?style=flat-square&logo=rust" alt="Rust 1.90+"/>
   </a>
-  <a href="https://github.com/chippr-robotics/sigil-watchmen">
+  <a href="https://github.com/chippr-robotics/sigil-sentinel">
     <img src="https://img.shields.io/badge/zingolib-v3.0.0-1a1a2e?style=flat-square" alt="zingolib v3.0.0"/>
   </a>
 </p>
@@ -23,7 +23,7 @@
 
 ## What is this
 
-Sigil Watchmen is a Rust service that monitors Zcash account balances using **viewing keys only** — no spending keys ever touch the server. It connects to an existing [lightwalletd](https://github.com/zcash/lightwalletd) gRPC endpoint, syncs compact blocks with [zingolib](https://github.com/zingolabs/zingolib), and exposes balances as Prometheus metrics plus a REST management API.
+Sigil Sentinel is a Rust service that monitors Zcash account balances using **viewing keys only** — no spending keys ever touch the server. It connects to an existing [lightwalletd](https://github.com/zcash/lightwalletd) gRPC endpoint, syncs compact blocks with [zingolib](https://github.com/zingolabs/zingolib), and exposes balances as Prometheus metrics plus a REST management API.
 
 Built to run alongside a Zebrad + lightwalletd stack where no wallet RPCs exist.
 
@@ -33,7 +33,7 @@ Built to run alongside a Zebrad + lightwalletd stack where no wallet RPCs exist.
 zebrad:8232 ──► lightwalletd:9067
                       │
                       ▼
-             sigil-watchmen
+             sigil-sentinel
              ├─ :9100 /metrics   (Prometheus)
              └─ :9101 /api       (Management API)
                       │
@@ -55,11 +55,11 @@ zebrad:8232 ──► lightwalletd:9067
 ### Docker Compose (recommended)
 
 ```yaml
-zcash-watchman:
+zcash-sentinel:
   build:
-    context: ./zcash-watchman
+    context: ./zcash-sentinel
     dockerfile: Dockerfile
-  container_name: zcash-watchman
+  container_name: zcash-sentinel
   restart: unless-stopped
   depends_on:
     lightwalletd:
@@ -67,15 +67,15 @@ zcash-watchman:
   ports:
     - "9101:9101"
   volumes:
-    - ./zcash-watchman/config.toml:/etc/zcash-watchman/config.toml:ro
-    - watchman-data:/var/lib/zcash-watchman
+    - ./zcash-sentinel/config.toml:/etc/zcash-sentinel/config.toml:ro
+    - sentinel-data:/var/lib/zcash-sentinel
   networks:
     - zcash-internal
 ```
 
 ```bash
-docker compose build zcash-watchman
-docker compose up -d zcash-watchman
+docker compose build zcash-sentinel
+docker compose up -d zcash-sentinel
 ```
 
 ### Configuration
@@ -93,7 +93,7 @@ poll_interval_secs = 60
 default_birthday_height = 2000000
 
 [storage]
-accounts_file = "/var/lib/zcash-watchman/accounts.json"
+accounts_file = "/var/lib/zcash-sentinel/accounts.json"
 ```
 
 ## API Reference
@@ -219,11 +219,11 @@ Exposed on `:9100/metrics`:
 ### Prometheus scrape config
 
 ```yaml
-- job_name: 'zcash-watchman'
+- job_name: 'zcash-sentinel'
   scrape_interval: 30s
   metrics_path: '/metrics'
   static_configs:
-    - targets: ['zcash-watchman:9100']
+    - targets: ['zcash-sentinel:9100']
 ```
 
 ## Viewing Key Safety
@@ -246,7 +246,7 @@ Requires Rust 1.90+ (edition 2024) and protobuf compiler:
 ```bash
 apt-get install protobuf-compiler
 cargo build --release
-./target/release/zcash-watchman --config config.toml
+./target/release/zcash-sentinel --config config.toml
 ```
 
 ## License

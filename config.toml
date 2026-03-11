@@ -1,4 +1,4 @@
-# zcash-watchman configuration
+# zcash-sentinel configuration
 
 [lightwalletd]
 # gRPC endpoint for lightwalletd (internal Docker network)
@@ -19,4 +19,4 @@ default_birthday_height = 2000000
 
 [storage]
 # Path to persistent account storage
-accounts_file = "/var/lib/zcash-watchman/accounts.json"
+accounts_file = "/var/lib/zcash-sentinel/accounts.json"
