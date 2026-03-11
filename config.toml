@@ -1,0 +1,22 @@
+# zcash-watchman configuration
+
+[lightwalletd]
+# gRPC endpoint for lightwalletd (internal Docker network)
+endpoint = "http://lightwalletd:9067"
+
+[server]
+# Prometheus metrics endpoint
+metrics_bind = "0.0.0.0:9100"
+# Management API endpoint
+api_bind = "0.0.0.0:9101"
+
+[scanner]
+# How often to sync with lightwalletd (seconds)
+poll_interval_secs = 60
+# Default birthday height for new accounts (if not specified)
+# Set to a recent height to avoid scanning the entire chain
+default_birthday_height = 2000000
+
+[storage]
+# Path to persistent account storage
+accounts_file = "/var/lib/zcash-watchman/accounts.json"

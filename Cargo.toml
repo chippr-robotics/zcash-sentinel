@@ -1,0 +1,37 @@
+[package]
+name = "zcash-watchman"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.90"
+description = "Zcash balance monitoring service using zingolib light client"
+
+[dependencies]
+# Zcash light client
+zingolib = { git = "https://github.com/zingolabs/zingolib.git", tag = "zingolib_v3.0.0" }
+# Re-exported by zingolib but needed for AccountId and BlockHeight types
+zip32 = "0.2.0"
+zcash_protocol = "0.7"
+
+# Async runtime
+tokio = { version = "1", features = ["full"] }
+
+# HTTP server
+axum = { version = "0.7", features = ["json"] }
+tower-http = { version = "0.5", features = ["cors"] }
+
+# Metrics
+prometheus = { version = "0.13", features = ["process"] }
+
+# Serialization
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+toml = "0.8"
+
+# Logging
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+
+# Utilities
+anyhow = "1"
+clap = { version = "4", features = ["derive"] }
+http = "1"
