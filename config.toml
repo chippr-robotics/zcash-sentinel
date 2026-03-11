@@ -1,7 +1,17 @@
 # zcash-sentinel configuration
 
 [lightwalletd]
-# gRPC endpoint for lightwalletd (internal Docker network)
+# gRPC endpoint for lightwalletd
+#
+# Connection modes (set SENTINEL_TRANSPORT env var):
+#
+#   direct (default) — HTTP or HTTPS, no proxy
+#     endpoint = "http://lightwalletd:9067"          # internal Docker network
+#     endpoint = "https://lwd.example.com:9067"      # remote over TLS
+#
+#   tor — all TCP routed through local Tor SOCKS5 proxy via torsocks
+#     endpoint = "http://abc...xyz.onion:9067"       # remote over Tor hidden service
+#
 endpoint = "http://lightwalletd:9067"
 
 [server]

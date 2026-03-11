@@ -22,15 +22,19 @@ RUN touch src/main.rs && cargo build --release
 FROM debian:bookworm-slim
 
 RUN apt-get update && \
-    apt-get install -y ca-certificates curl && \
+    apt-get install -y ca-certificates curl tor torsocks && \
     rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /build/target/release/zcash-sentinel /usr/local/bin/
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 
 # Create data directory
 RUN mkdir -p /var/lib/zcash-sentinel
 
 EXPOSE 9100 9101
 
-ENTRYPOINT ["zcash-sentinel"]
+# SENTINEL_TRANSPORT: direct (default) | tor
+ENV SENTINEL_TRANSPORT=direct
+
+ENTRYPOINT ["entrypoint.sh"]
 CMD ["--config", "/etc/zcash-sentinel/config.toml"]

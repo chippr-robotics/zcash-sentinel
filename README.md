@@ -41,6 +41,10 @@ zebrad:8232 ──► lightwalletd:9067
              prometheus ──► grafana
 ```
 
+The sentinel is structured as an **infrastructure wrapper** around [zingolib](https://github.com/zingolabs/zingolib), the Zcash light client library. zingolib handles block scanning, note decryption, and wallet state — the sentinel adds everything else: REST API, Prometheus metrics, persistent account storage, Docker packaging, and multi-transport connectivity (HTTP/HTTPS/Tor). The transport layer is handled entirely outside the Rust binary via an entrypoint script, keeping the application code transport-agnostic.
+
+See [docs/architecture.md](docs/architecture.md) for detailed Mermaid diagrams of system interactions, data flow, transport modes, and the dependency boundary between the sentinel and zingolib.
+
 ## Features
 
 - **Shielded + transparent monitoring** — Sapling, Orchard, and transparent pool balances via UFVKs
@@ -49,6 +53,27 @@ zebrad:8232 ──► lightwalletd:9067
 - **Runtime account management** — add/remove viewing keys via REST API without restarting
 - **Persistent state** — accounts and sync progress survive container restarts
 - **Watch-only** — only viewing keys, never spending keys
+- **HTTPS + Tor transport** — connect to remote lightwalletd over TLS or Tor hidden services
+
+## Transport Modes
+
+The sentinel supports three connection modes, controlled by the `SENTINEL_TRANSPORT` environment variable and the endpoint URI in `config.toml`:
+
+| Mode | `SENTINEL_TRANSPORT` | Endpoint example | Use case |
+|------|---------------------|------------------|----------|
+| HTTP | `direct` (default) | `http://lightwalletd:9067` | Same Docker network |
+| HTTPS | `direct` | `https://lwd.example.com:9067` | Remote over TLS |
+| Tor | `tor` | `http://abc...xyz.onion:9067` | Remote over Tor hidden service |
+
+- **HTTP/HTTPS** require no extra infrastructure. HTTPS is handled natively by zingolib's rustls TLS stack.
+- **Tor** mode starts a local Tor SOCKS5 proxy inside the container and wraps the sentinel binary with `torsocks`, transparently routing all TCP through Tor. No Rust code changes — just set the env var and point the endpoint at a `.onion` address.
+
+```bash
+# Remote over Tor
+docker run -e SENTINEL_TRANSPORT=tor \
+  -v config-tor.toml:/etc/zcash-sentinel/config.toml:ro \
+  zcash-sentinel
+```
 
 ## Quick Start
 

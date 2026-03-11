@@ -198,6 +198,18 @@ docker restart zcash-sentinel
 docker inspect --format='{{.State.Health.Status}}' zcash-sentinel
 ```
 
+## Transport Modes
+
+The sentinel supports HTTP, HTTPS, and Tor connections to lightwalletd. Controlled by `SENTINEL_TRANSPORT` env var and the endpoint URI in config.toml:
+
+- **direct** (default): HTTP or HTTPS. HTTPS works natively via zingolib's TLS stack.
+- **tor**: Starts a local Tor SOCKS5 proxy and routes all traffic through it via `torsocks`. Point the endpoint at a `.onion:9067` address.
+
+```bash
+# Check current transport mode
+docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' zcash-sentinel | grep SENTINEL_TRANSPORT
+```
+
 ## Notes
 
 - Balances sync every 60 seconds from lightwalletd
